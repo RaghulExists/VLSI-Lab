@@ -1,0 +1,51 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{circuitikz}
+\usetikzlibrary{calc}
+\begin{document}
+\begin{circuitikz}[scale=1.15, transform shape]
+  % ---- PMOS current mirror: M3 (diode) left, M2 (mirror) right ----
+  \node[pmos, yscale=-1] (M3) at (1.5,4.0) {};
+  \node[pmos, yscale=-1] (M2) at (4.5,4.0) {};
+
+  % VDD rail
+  \draw (M3.S) -- (1.5,5.6);
+  \draw (M2.S) -- (4.5,5.6);
+  \draw (1.5,5.6) -- (4.5,5.6);
+  \draw (3.0,5.6) -- (3.0,6.1) node[vcc]{$V_{DD}$};
+
+  % ---- common gate line at y=3.0 ----
+  \draw (M3.G) -- (1.0,3.0);
+  \draw (M2.G) -- (4.0,3.0);
+  \draw (1.0,3.0) -- (4.0,3.0);
+
+  % M3 diode connection: drain tied to the gate line
+  \draw (M3.D) -- (1.5,3.0);
+  \node[circ] at (1.5,3.0) {};
+
+  % reference branch: M3 drain -> Iref -> GND
+  \draw (1.5,3.0) -- (1.5,2.4);
+  \draw (1.5,2.4) to[I, l_=$I_{ref}$, invert] (1.5,0.2);
+  \draw (1.5,0.2) -- (1.5,-0.4) node[ground]{};
+
+  % ---- NMOS driver M1 ----
+  \node[nmos] (M1) at (4.5,1.1) {};
+  \draw (M1.S) -- (4.5,-0.4) node[ground]{};
+
+  % output node Vout : M2 drain -- M1 drain
+  \draw (M2.D) -- (4.5,1.1|-M1.D);  % down the x=4.5 column to M1 drain
+  \node[circ] at (4.5,2.4) {};
+  \draw (4.5,2.4) -- (6.0,2.4);
+  % load capacitor
+  \draw (6.0,2.4) to[C, l=$C_L$] (6.0,-0.4) node[ground]{};
+  \node[ocirc] at (6.0,2.4){}; \node[above right] at (6.0,2.45){$V_{out}$};
+
+  % ---- input vin -> M1 gate ----
+  \draw (M1.G) -- (2.9,1.1);
+  \draw (2.9,1.1) to[sV, l_=$v_{in}$] (2.9,-0.4) node[ground]{};
+
+  % device labels
+  \node[left]  at (M3.bulk) {\scriptsize $M_3$};
+  \node[right] at (M2.bulk) {\scriptsize $M_2$};
+  \node[right] at (M1.bulk) {\scriptsize $M_1$};
+\end{circuitikz}
+\end{document}

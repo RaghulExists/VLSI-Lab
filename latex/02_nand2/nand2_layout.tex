@@ -1,0 +1,70 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}[scale=0.82,
+  nwell/.style ={draw=blue!50, dashed, line width=1pt, fill=blue!6},
+  active/.style={draw=green!55!black, fill=green!55, fill opacity=0.45},
+  poly/.style  ={draw=red!70!black,  fill=red!75,   fill opacity=0.55},
+  metal/.style ={draw=blue!70!black, fill=blue!55,  fill opacity=0.40},
+  cont/.style  ={draw=black, fill=black},
+  sel/.style   ={draw=#1, dotted, line width=1pt}]
+
+  % n-well (top, holds the two parallel PMOS)
+  \fill[nwell] (0.0,6.0) rectangle (9.4,11.4);
+  \node[blue!55] at (8.6,11.1) {\scriptsize n-well};
+
+  % metal rails
+  \fill[metal] (0.2,10.3) rectangle (9.2,11.0); \node[left] at (0.15,10.65){$V_{DD}$};
+  \fill[metal] (0.2,0.2)  rectangle (9.2,0.9);   \node[left] at (0.15,0.55){$GND$};
+
+  % shared p-diffusion (PMOS) and n-diffusion (NMOS)
+  \fill[active] (1.3,7.0) rectangle (7.9,9.0);
+  \fill[active] (1.3,2.1) rectangle (7.9,4.1);
+
+  % two poly gates A and B (cross both diffusions)
+  \fill[poly] (3.0,1.5) rectangle (3.6,9.7);
+  \fill[poly] (5.4,1.5) rectangle (6.0,9.7);
+  \fill[poly] (3.0,5.0) rectangle (2.2,5.6); \node[red!60!black,left] at (2.15,5.3){$A$};
+  \fill[poly] (6.0,4.4) rectangle (6.8,5.0); \node[red!60!black,right] at (6.85,4.7){$B$};
+
+  % ---- metals + contacts ----
+  % PMOS left source -> VDD
+  \fill[metal] (1.8,8.0) rectangle (2.6,10.6);
+  \foreach \y in {7.6,8.4}{\fill[cont] (2.0,\y) rectangle (2.4,\y+0.3);}
+  % PMOS right source -> VDD
+  \fill[metal] (6.7,8.0) rectangle (7.5,10.6);
+  \foreach \y in {7.6,8.4}{\fill[cont] (6.9,\y) rectangle (7.3,\y+0.3);}
+  % PMOS drain (middle) = Y
+  \foreach \y in {7.6,8.4}{\fill[cont] (4.3,\y) rectangle (4.7,\y+0.3);}
+  % NMOS right source -> GND
+  \fill[metal] (6.7,1.4) rectangle (7.5,3.6);
+  \foreach \y in {2.6,3.4}{\fill[cont] (6.9,\y) rectangle (7.3,\y+0.3);}
+  % NMOS drain (left) = Y
+  \foreach \y in {2.6,3.4}{\fill[cont] (2.0,\y) rectangle (2.4,\y+0.3);}
+
+  % output metal Y : PMOS drain (middle, top) -> NMOS drain (left, bottom)
+  \fill[metal] (4.2,7.6) rectangle (4.8,9.0);
+  \fill[metal] (4.2,5.2) rectangle (4.8,7.8);           % drop down into the gap
+  \fill[metal] (1.8,5.2) rectangle (4.8,5.8);           % run left
+  \fill[metal] (1.8,2.6) rectangle (2.4,5.8);           % drop to NMOS drain
+  \fill[metal] (0.7,5.2) rectangle (1.8,5.8); \node[left] at (0.65,5.5){$Y$};
+
+  % well tap (n+) -> VDD  &  substrate tap (p+) -> GND
+  \fill[active] (8.1,9.6) rectangle (8.9,10.4); \draw[sel=green!50!black](8.0,9.5)rectangle(9.0,10.5);
+  \fill[cont] (8.35,9.85) rectangle (8.65,10.15); \node at (8.5,9.25){\scriptsize n$^{+}$};
+  \fill[active] (8.1,1.0) rectangle (8.9,1.8); \draw[sel=orange!80!black](8.0,0.9)rectangle(9.0,1.9);
+  \fill[cont] (8.35,1.25) rectangle (8.65,1.55); \node at (8.5,2.25){\scriptsize p$^{+}$};
+
+  % labels
+  \node[black] at (4.5,6.4){\scriptsize PMOS (parallel)};
+  \node[black] at (4.5,3.0){\scriptsize NMOS (series)};
+
+  % ---- legend ----
+  \begin{scope}[shift={(0,-2.6)}]
+    \fill[active](0,0.5) rectangle(0.5,0.9); \node[right] at(0.6,0.7){\scriptsize Active};
+    \fill[poly]  (2.6,0.5) rectangle(3.1,0.9); \node[right] at(3.2,0.7){\scriptsize Poly};
+    \fill[metal] (4.6,0.5) rectangle(5.1,0.9); \node[right] at(5.2,0.7){\scriptsize Metal1};
+    \fill[cont]  (6.4,0.55) rectangle(6.75,0.85); \node[right] at(6.85,0.7){\scriptsize Contact};
+  \end{scope}
+\end{tikzpicture}
+\end{document}
