@@ -2,77 +2,74 @@
 \usepackage{tikz}
 \begin{document}
 \begin{tikzpicture}[scale=0.95,
-  nwell/.style ={draw=blue!50, dashed, line width=1pt, fill=blue!6},
-  active/.style={draw=green!55!black, fill=green!55, fill opacity=0.45},
-  poly/.style  ={draw=red!70!black,  fill=red!75,   fill opacity=0.55},
-  metal/.style ={draw=blue!70!black, fill=blue!55,  fill opacity=0.40},
+  nwell/.style ={draw=blue!55, dashed, line width=1pt, fill=blue!5},
+  pdiff/.style ={draw=orange!80!black, fill=orange!65, fill opacity=0.55},
+  ndiff/.style ={draw=green!55!black, fill=green!60, fill opacity=0.5},
+  poly/.style  ={draw=red!70!black,  fill=red!75,  fill opacity=0.6},
+  metal/.style ={draw=blue!70!black, fill=blue!45, fill opacity=0.45},
   cont/.style  ={draw=black, fill=black},
-  sel/.style   ={draw=#1, dotted, line width=1pt}]
+  lbl/.style   ={font=\footnotesize}]
 
-  % ---------- n-well (top half, holds the PMOS) ----------
-  \fill[nwell] (0.0,6.0) rectangle (8.0,11.4);
-  \node[blue!55] at (7.2,11.1) {\scriptsize n-well};
+  % ---------------- power rails ----------------
+  \fill[metal] (0.4,11.0) rectangle (9.6,11.7);  \node[lbl,left] at (0.3,11.35){$V_{DD}$};
+  \fill[metal] (0.4,0.3)  rectangle (9.6,1.0);    \node[lbl,left] at (0.3,0.65){$V_{SS}$};
 
-  % ---------- selects (implant) boxes ----------
-  \draw[sel=orange!80!black] (1.0,6.6) rectangle (6.7,9.4);
-  \node[orange!70!black] at (1.9,9.15) {\scriptsize p$^{+}$ select};
-  \draw[sel=green!50!black] (1.0,1.7) rectangle (6.7,4.5);
-  \node[green!45!black] at (1.9,4.25) {\scriptsize n$^{+}$ select};
+  % ---------------- n-well around PMOS ----------------
+  \fill[nwell] (1.6,6.4) rectangle (8.7,10.9);
+  \node[lbl,blue!60] at (7.9,10.6){n-well (PMOS body)};
 
-  % ---------- METAL rails ----------
-  \fill[metal] (0.2,10.3) rectangle (7.8,11.0); \node[left] at (0.15,10.65){$V_{DD}$};
-  \fill[metal] (0.2,0.2)  rectangle (7.8,0.9);   \node[left] at (0.15,0.55){$GND$};
+  % ---------------- active areas ----------------
+  \fill[pdiff] (2.4,7.2) rectangle (7.6,9.2);     % PMOS p-diffusion
+  \fill[ndiff] (2.4,2.2) rectangle (7.6,4.2);     % NMOS n-diffusion
 
-  % ---------- PMOS active (p-diffusion) ----------
-  \fill[active] (1.3,7.0) rectangle (6.4,9.0);
-  % ---------- NMOS active (n-diffusion) ----------
-  \fill[active] (1.3,2.1) rectangle (6.4,4.1);
+  % ---------------- polysilicon gate (vertical, shared) ----------------
+  \fill[poly] (4.7,1.7) rectangle (5.3,9.9);
+  \node[lbl,red!65!black] at (5.0,10.15){G};
+  % gate input tab to the left + Vin contact
+  \fill[poly]  (4.7,5.2) rectangle (3.4,5.8);
+  \fill[metal] (1.6,5.0) rectangle (3.7,6.0);
+  \fill[cont]  (3.45,5.35) rectangle (3.75,5.65);
+  \node[lbl,left] at (1.55,5.5){$V_{in}$};
 
-  % ---------- polysilicon gate (input), crosses both ----------
-  \fill[poly] (3.4,1.5) rectangle (4.0,9.7);
-  \fill[poly] (3.4,4.9) rectangle (2.0,5.5);          % poly tab to the input pin
-  \node[red!60!black,left] at (1.95,5.2) {$V_{in}$ (poly)};
+  % ---------------- PMOS source -> VDD (left of gate) ----------------
+  \fill[metal] (3.1,8.0) rectangle (3.7,11.3);
+  \fill[cont]  (3.25,8.05) rectangle (3.55,8.35);
+  \node[lbl] at (3.4,7.45){S};
 
-  % ---------- source/drain metal & contacts ----------
-  % PMOS source (left) -> VDD
-  \fill[metal] (1.7,8.0) rectangle (2.6,10.6);
-  % PMOS drain (right) -> output column
-  \fill[metal] (5.1,4.0) rectangle (6.0,9.0);
-  % NMOS source (left) -> GND
-  \fill[metal] (1.7,1.4) rectangle (2.6,3.6);
-  % output pin tab
-  \fill[metal] (6.0,5.6) rectangle (7.4,6.4); \node[right] at (7.45,6.0){$V_{out}$};
+  % ---------------- NMOS source -> VSS (left of gate) ----------------
+  \fill[metal] (3.1,0.7) rectangle (3.7,3.4);
+  \fill[cont]  (3.25,3.05) rectangle (3.55,3.35);
+  \node[lbl] at (3.4,4.45){S};
 
-  % contacts (diffusion <-> metal): two per S/D for low resistance
-  \foreach \y in {7.6,8.4}{ \fill[cont] (1.95,\y) rectangle (2.35,\y+0.3); } % PMOS src
-  \foreach \y in {7.6,8.4}{ \fill[cont] (5.55,\y) rectangle (5.95,\y+0.3); } % PMOS drn
-  \foreach \y in {2.6,3.4}{ \fill[cont] (1.95,\y) rectangle (2.35,\y+0.3); } % NMOS src
-  \foreach \y in {2.6,3.4}{ \fill[cont] (5.35,\y) rectangle (5.75,\y+0.3); } % NMOS drn
+  % ---------------- Vout : vertical metal joins both drains (right of gate) ----
+  \fill[metal] (6.7,2.9) rectangle (7.3,8.4);
+  \fill[cont]  (6.85,8.05) rectangle (7.15,8.35);   % PMOS drain
+  \fill[cont]  (6.85,3.05) rectangle (7.15,3.35);   % NMOS drain
+  \node[lbl] at (6.55,8.7){D}; \node[lbl] at (6.55,2.7){D};
+  \fill[metal] (7.3,5.4) rectangle (9.0,6.0);
+  \node[lbl,right] at (9.05,5.7){$V_{out}$};
 
-  % ---------- well tap (n+ in n-well) tied to VDD ----------
-  \fill[active] (6.7,9.6) rectangle (7.5,10.4);
-  \draw[sel=green!50!black] (6.6,9.5) rectangle (7.6,10.5);
-  \fill[cont] (6.95,9.85) rectangle (7.25,10.15);
-  \node[align=center] at (7.1,9.25) {\scriptsize n$^{+}$\\\scriptsize tap};
+  % ---------------- well tap (n+ -> VDD) & substrate tap (p+ -> VSS) ----------------
+  \fill[ndiff] (7.9,9.6) rectangle (8.5,10.3);
+  \fill[cont]  (8.05,9.85) rectangle (8.35,10.15);
+  \fill[metal] (8.05,10.1) rectangle (8.35,11.3);
+  \node[lbl] at (8.2,9.35){n$^{+}$};
+  \fill[pdiff] (7.9,1.3) rectangle (8.5,2.0);
+  \fill[cont]  (8.05,1.55) rectangle (8.35,1.85);
+  \fill[metal] (8.05,0.7) rectangle (8.35,1.8);
+  \node[lbl] at (8.2,2.25){p$^{+}$};
 
-  % ---------- substrate tap (p+) tied to GND ----------
-  \fill[active] (6.7,1.0) rectangle (7.5,1.8);
-  \draw[sel=orange!80!black] (6.6,0.9) rectangle (7.6,1.9);
-  \fill[cont] (6.95,1.25) rectangle (7.25,1.55);
-  \node[align=center] at (7.1,2.25) {\scriptsize p$^{+}$\\\scriptsize tap};
-
-  % device labels
-  \node[black] at (4.9,8.0) {\scriptsize PMOS};
-  \node[black] at (4.9,3.1) {\scriptsize NMOS};
+  % ---------------- device labels ----------------
+  \node[lbl] at (5.9,8.2){PMOS (pull-up)};
+  \node[lbl] at (5.9,3.2){NMOS (pull-down)};
 
   % ---------------- legend ----------------
-  \begin{scope}[shift={(0,-2.6)}]
-    \fill[active](0,0.5) rectangle(0.5,0.9); \node[right] at(0.6,0.7){\scriptsize Active/diffusion};
-    \fill[poly]  (3.2,0.5) rectangle(3.7,0.9); \node[right] at(3.8,0.7){\scriptsize Polysilicon};
-    \fill[metal] (5.6,0.5) rectangle(6.1,0.9); \node[right] at(6.2,0.7){\scriptsize Metal1};
-    \fill[cont]  (0.1,-0.1) rectangle(0.4,0.2); \node[right] at(0.6,0.05){\scriptsize Contact};
-    \draw[nwell] (3.2,-0.1) rectangle(3.7,0.2); \node[right] at(3.8,0.05){\scriptsize n-well};
-    \draw[sel=orange!80!black](5.6,-0.1)rectangle(6.1,0.2);\node[right]at(6.2,0.05){\scriptsize Select};
+  \begin{scope}[shift={(0,-2.3)}]
+    \fill[pdiff](0.4,0.5) rectangle(0.9,0.85); \node[lbl,right] at(0.95,0.67){p-diff};
+    \fill[ndiff](2.2,0.5) rectangle(2.7,0.85); \node[lbl,right] at(2.75,0.67){n-diff};
+    \fill[poly] (4.0,0.5) rectangle(4.5,0.85); \node[lbl,right] at(4.55,0.67){poly};
+    \fill[metal](5.6,0.5) rectangle(6.1,0.85); \node[lbl,right] at(6.15,0.67){metal};
+    \fill[cont] (7.3,0.55) rectangle(7.6,0.82); \node[lbl,right] at(7.65,0.67){contact};
   \end{scope}
 \end{tikzpicture}
 \end{document}
