@@ -864,3 +864,30 @@ is why each latch module uses `always @(en or ...)` while each flip-flop uses
 5. **Digital:** file ends in `.v`; testbench module name matches what you elaborate; instantiate the DUT correctly; `$finish` present.
 6. **Synthesis:** `read_hdl` points to YOUR file in `run.tcl`; run `genus -f run.tcl`; capture `report area/power/timing`.
 7. Write the **Result** line with actual numbers (delay/gain/BW or area/power/fmax) — examiners look for it.
+
+
+---
+
+# 9. Report figures — LaTeX (Overleaf) for schematic / stick / layout
+
+For the **write-up drawings** of the analog experiments, ready-to-compile LaTeX is
+provided in **`latex/vlsi_analog_diagrams.tex`**. It uses `circuitikz` + `tikz` and
+produces a single PDF with 8 figures:
+
+| Circuit | Schematic | Stick diagram | Layout |
+|---------|-----------|---------------|--------|
+| CMOS Inverter | yes | yes | yes |
+| 2-input NAND | yes | yes | yes |
+| CS Amplifier (PMOS mirror load) | yes | (see note*) | yes |
+
+**How to use in Overleaf:** New Project -> paste `vlsi_analog_diagrams.tex` into
+`main.tex` -> set compiler to **pdfLaTeX** -> Compile. To drop one figure into your own
+report, copy that `tikzpicture` and make sure your preamble has
+`\usepackage{circuitikz}`, `\usepackage{tikz}`, `\usetikzlibrary{calc}`.
+
+**Colour convention** (Mead-Conway): Metal1 = blue, Poly = red, n-diffusion = green,
+p-diffusion = orange, Contact = black square, n-well = dashed box, Select = dotted box.
+
+*Stick diagrams are a **digital-gate** convention. An analog amplifier is normally shown
+as schematic + transistor-level layout (both provided); a separate "stick diagram" for
+the CS amplifier is not standard, so it is intentionally omitted and explained in the file.
