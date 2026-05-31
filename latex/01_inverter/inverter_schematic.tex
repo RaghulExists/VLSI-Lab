@@ -1,0 +1,34 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{circuitikz}
+\usetikzlibrary{calc}
+\begin{document}
+\begin{circuitikz}[scale=1.2, transform shape]
+  % --- transistors ---
+  \node[pmos, yscale=-1] (P) at (0,2.1) {};   % flipped: source on top
+  \node[nmos]            (N) at (0,-0.4) {};
+
+  % --- supply rails ---
+  \draw (P.S) -- (0,3.3) node[vcc]{$V_{DD}$};
+  \draw (N.S) -- (0,-1.6) node[ground]{};
+
+  % --- output column (drain to drain) ---
+  \draw (P.D) -- (N.D);
+  \coordinate (mid) at ($(P.D)!0.5!(N.D)$);
+  \draw (mid) -- (2.2,\the\dimexpr0pt) ;
+  \node[ocirc] at (2.2,0) {};
+  \node[right] at (2.3,0) {$V_{out}$};
+
+  % --- input (gates tied) ---
+  \draw (P.G) -- (-1.3, 2.1);
+  \draw (N.G) -- (-1.3,-0.4);
+  \draw (-1.3,2.1) -- (-1.3,-0.4);
+  \coordinate (inmid) at (-1.3,0.85);
+  \draw (inmid) -- (-2.4,0.85);
+  \node[ocirc] at (-2.4,0.85) {};
+  \node[left] at (-2.5,0.85) {$V_{in}$};
+
+  % labels
+  \node[right] at (P.D) {\scriptsize PMOS};
+  \node[right] at (N.D) {\scriptsize NMOS};
+\end{circuitikz}
+\end{document}

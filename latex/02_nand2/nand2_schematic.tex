@@ -1,0 +1,48 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{circuitikz}
+\usetikzlibrary{calc}
+\begin{document}
+\begin{circuitikz}[scale=1.1, transform shape]
+  % ---- PMOS pair in parallel (flipped: source faces VDD) ----
+  \node[pmos, yscale=-1] (PA) at (0,3.0) {};
+  \node[pmos, yscale=-1] (PB) at (3.0,3.0) {};
+
+  % VDD rail
+  \draw (PA.S) -- (0,5.4);
+  \draw (PB.S) -- (3.0,5.4);
+  \draw (0,5.4) -- (3.0,5.4);
+  \draw (1.5,5.4) -- (1.5,5.9) node[vcc]{$V_{DD}$};
+
+  % ---- PMOS drains -> output node Y ----
+  \draw (PA.D) -- (0,2.0);
+  \draw (PB.D) -- (3.0,2.0);
+  \draw (0,2.0) -- (3.0,2.0);
+  \node[circ] at (1.5,2.0) {};
+  \draw (3.0,2.0) -- (4.7,2.0); \node[ocirc] at (4.7,2.0){}; \node[right] at (4.8,2.0){$Y$};
+
+  % ---- NMOS pair in series ----
+  \node[nmos] (NA) at (1.5,0.6) {};
+  \node[nmos] (NB) at (1.5,-1.7) {};
+  \draw (1.5,2.0) -- (NA.D);          % Y -> NA drain
+  \draw (NA.S) -- (NB.D);             % series middle node
+  \draw (NB.S) -- (1.5,-3.1) node[ground]{};
+
+  % ---- input A bus (PA gate + NA gate) ----
+  \draw (PA.G) -- (-1.6,3.0);
+  \draw (NA.G) -- (-1.6,0.6);  \node[circ] at (-1.6,0.6){};
+  \draw (-1.6,3.0) -- (-1.6,-0.4);
+  \node[ocirc] at (-1.6,-0.4){}; \node[below] at (-1.6,-0.55){$A$};
+
+  % ---- input B bus (PB gate + NB gate), routed up & over the top ----
+  \draw (PB.G) -- (2.0,3.0) -- (2.0,6.2) -- (-2.6,6.2) -- (-2.6,-1.7);
+  \draw (NB.G) -- (-2.6,-1.7); \node[circ] at (-2.6,-1.7){};
+  \draw (-2.6,-1.7) -- (-2.6,-2.4);
+  \node[ocirc] at (-2.6,-2.4){}; \node[below] at (-2.6,-2.55){$B$};
+
+  % device labels
+  \node[left]  at (PA.bulk) {\scriptsize $P_A$};
+  \node[right] at (PB.bulk) {\scriptsize $P_B$};
+  \node[right] at (NA.bulk) {\scriptsize $N_A$};
+  \node[right] at (NB.bulk) {\scriptsize $N_B$};
+\end{circuitikz}
+\end{document}

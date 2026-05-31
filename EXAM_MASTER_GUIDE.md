@@ -864,3 +864,7 @@ is why each latch module uses `always @(en or ...)` while each flip-flop uses
 5. **Digital:** file ends in `.v`; testbench module name matches what you elaborate; instantiate the DUT correctly; `$finish` present.
 6. **Synthesis:** `read_hdl` points to YOUR file in `run.tcl`; run `genus -f run.tcl`; capture `report area/power/timing`.
 7. Write the **Result** line with actual numbers (delay/gain/BW or area/power/fmax) — examiners look for it.
+
+> Report drawings (schematic / stick diagram / layout) for the analog experiments are
+> kept separately as ready-to-compile LaTeX in the **`latex/`** folder — see
+> `latex/README.md`.
